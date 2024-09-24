@@ -14,7 +14,7 @@ This Repository consists of open-source contributions made by beginners via ACM 
 git clone https://github.com/YOUR_USERNAME/REPOSITORY_NAME.git
 
 ### Commands
-Add changes: git add .
-Commit changes: git commit -m "Your commit message"
-Push changes to remote: git push origin branch-name
-Pull changes from remote: git pull origin branch-name
+- Add changes: git add .
+- Commit changes: git commit -m "Your commit message"
+- Push changes to remote: git push origin branch-name
+- Pull changes from remote: git pull origin branch-name
