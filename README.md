@@ -9,6 +9,7 @@ This Repository consists of open-source contributions made by beginners via ACM 
 ### 2. Clone Your Fork
 - Open your terminal (Command Prompt, Git Bash, or Terminal).
 - Use the following command to clone your forked repository to your local machine:
+  
         git clone https://github.com/YOUR_USERNAME/REPOSITORY_NAME.git
 
 ### Commands
