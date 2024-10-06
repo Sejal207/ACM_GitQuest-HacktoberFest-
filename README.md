@@ -1,4 +1,4 @@
-This Repository consists of open-source contributions made by beginners via [ACM-BMU]([url](https://acmbmu.com/)) in HacktoberFest'24.
+This Repository consists of open-source contributions made by beginners via [ACM-BMU](https://acmbmu.com/) in HacktoberFest'24.
 
 ## Step-by-Step Guide
 
