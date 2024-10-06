@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCore-Core Wellness, Vital Health Solutions</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #389595;
+        }
+
+        .main {
+            background-color: white;
+            border-radius: 5px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            border-radius: 5px;
+        }
+
+        .navbar-logo img {
+            height: 40px;
+        }
+
+        .navbar-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: #3E8E8E;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .navbar-links a:hover {
+            color: #421a81;
+        }
+
+        .navbar-contact {
+            padding: 10px 20px;
+            background-color: #3E8E8E;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .navbar-contact:hover {
+            background-color: #389595;
+        }
+
+        .navbar-links .active {
+            color: #2b6b6b;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        @media (max-width: 767px) {
+            .navbar-links {
+                display: none;
+                flex-direction: column;
+                width: 80%;
+                position: absolute;
+                top: 60px;
+                left: 7%;
+                background-color: white;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                padding: 10px;
+            }
+
+            .navbar-links a {
+                padding: 10px 0;
+                text-align: center;
+                width: 100%;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .navbar-links.show {
+                display: flex;
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 33px;
+            flex-wrap: wrap;
+            padding: 5px;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #3E8E8E;
+        }
+
+        .header-title h1 {
+            font-weight: bolder;
+            font-size: xx-large;
+            margin-bottom: 1px;
+        }
+
+        .header-title p {
+            font-weight: bolder;
+            font-size: larger;
+        }
+
+        .header-contact {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .block1 {
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .block1 div {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .service {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .Services {
+            text-decoration: none;
+            color: #389595;
+            font-weight: 600;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+        }
+
+        .Services-icon {
+            width: 40px;
+            height: 40px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .Services:hover .Services-icon {
+            transform: scale(1.1);
+        }
+
+        .footer-section {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            border-radius: 5px;
+        }
+
+        .footer-links {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #36D1DC;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-links {
+                gap: 10px;
+                font-size: 14px;
+            }
+
+            .navbar-logo img {
+                height: 35px;
+            }
+
+            .navbar-contact {
+                padding: 5px 15px;
+                font-size: 14px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .header img {
+                width: 80%;
+            }
+
+            .header-title h1 {
+                font-size: 2em;
+            }
+
+            .header-title p {
+                font-size: 1em;
+            }
+
+            .block1 div {
+                font-size: 1em;
+            }
+
+            .content1 {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content1 img {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .service-cards {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .navbar-links {
+                gap: 10px;
+                font-size: 12px;
+            }
+
+            .navbar-logo img {
+                height: 30px;
+            }
+
+            .navbar-contact {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            .header img {
+                width: 100%;
+            }
+
+            .header-title h1 {
+                font-size: 1.5em;
+            }
+
+            .header-title p {
+                font-size: 0.9em;
+            }
+
+            .content1 img {
+                width: 100%;
+            }
+
+            .block1 div {
+                font-size: 0.9em;
+            }
+
+            .Services-icon {
+                width: 30px;
+                height: 30px;
+            }
+
+            .footer-section {
+                padding: 10px 0;
+                font-size: 0.9em;
+            }
+
+            .footer-links {
+                gap: 10px;
+            }
+        }
+
+        .user-options {
+            padding: 50px 0;
+            background-color: #fff;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            gap: 20px;
+        }
+
+        .card {
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            padding: 30px;
+            background-color: white;
+            text-align: center;
+            width: 45%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 1.5em;
+            color: #389595;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            padding: 10px 20px;
+            background-color: #389595;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #2b6b6b;
+        }
+
+        .services {
+            padding: 50px 0;
+        }
+
+        .service-cards {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+        }
+
+        .service-card {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            font-size: 1.3em;
+            color: #389595;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="navbar-logo">
+            <a href="#"><img src="logo.png" alt="Logo"></a>
+        </div>
+        <div class="hamburger">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="navbar-links">
+            <a href="#">Home</a>
+            <a href="#">About Us</a>
+            <a href="#">Services</a>
+            <a href="#" class="navbar-contact">Contact Us</a>
+        </div>
+    </div>
+
+    <section class="header">
+        <div class="header-title">
+            <h1>VitaCore</h1>
+            <p>Core Wellness, Vital Health Solutions</p>
+        </div>
+    </section>
+
+    <section class="user-options">
+        <div class="container">
+            <div class="card">
+                <img src="login.png" alt="Login">
+                <h3>Patient Login</h3>
+                <p>Access your medical history, book appointments, and manage health records.</p>
+                <button class="login-btn">Login</button>
+            </div>
+
+            <div class="card">
+                <img src="doctor.png" alt="Doctor">
+                <h3>Doctor Login</h3>
+                <p>Upload patient data, manage appointments, and monitor health records.</p>
+                <button class="login-btn">Login</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="service-cards">
+            <div class="service-card">
+                <img src="service1.png" alt="Service 1">
+                <h3>Telemedicine</h3>
+                <p>Consult doctors online through our platform.</p>
+            </div>
+            <div class="service-card">
+                <img src="service2.png" alt="Service 2">
+                <h3>Appointment Scheduling</h3>
+                <p>Book appointments with ease.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="footer-section">
+        <p>&copy; 2024 VitaCore. All rights reserved.</p>
+        <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </section>
+</body>
+
+</html>
