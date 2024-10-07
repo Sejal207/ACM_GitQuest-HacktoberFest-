@@ -1,6 +1,8 @@
+
 This Repository consists of open-source contributions made by beginners via [ACM-BMU](https://acmbmu.com/) in HacktoberFest'24.
 
-## Step-by-Step Guide
+
+## [Step-by-Step Guide](https://docs.google.com/document/d/1Q0moGncnVrqtyNK9egjHNQQZ55evcllL1xVMo-tvdlA/edit?usp=sharing)
 
 ### 1. Fork the Repository
 - Click the **Fork** button in the upper right corner. This creates a copy of the repository under your GitHub account.
@@ -15,3 +17,4 @@ This Repository consists of open-source contributions made by beginners via [ACM
 - Add changes: git add .
 - Commit changes: git commit -m "Your commit message"
 - Push changes to remote: git push
+
