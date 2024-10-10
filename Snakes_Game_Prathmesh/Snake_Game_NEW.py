@@ -71,16 +71,15 @@ class Snake:
             self.eyes_l = [[head[0] + self.size // 2, head[1] + 14]]
         if self.direction == "UP":
             self.eyes_r = [[head[0] + 14, head[1] + self.size - 14]]
-            self.eyes_l = [[head[0] + 2, head[1] + self.size -14]]
+            self.eyes_l = [[head[0] + 2, head[1] + self.size - 14]]
         if self.direction == "DOWN":
             self.eyes_r = [[head[0] + 2, head[1] + self.size // 2]]
             self.eyes_l = [[head[0] + 14, head[1] + self.size // 2]]
 
     def draw(self, surface):
-        # Draw the snake's body
+        """
         for index, segment in enumerate(self.body):
-            if index == len(self.body) - 1:
-                # Draw head
+            if index < 3 or index >= len(self.body) - 3:
                 pygame.draw.circle(
                     surface,
                     green,
@@ -88,12 +87,16 @@ class Snake:
                     self.size // 2,
                 )
             else:
-                # Draw body
                 pygame.draw.rect(
                     surface, green, [segment[0], segment[1], self.size, self.size]
                 )
-
-        # Draw eyes
+        """
+        for segment in self.body:
+            pygame.draw.circle(surface, green,
+                (segment[0] + self.size // 2, segment[1] + self.size // 2),
+                self.size // 2,
+            )
+        
         plotEyes(surface, black, self.eyes_r, 4)
         plotEyes(surface, black, self.eyes_l, 4)
 
