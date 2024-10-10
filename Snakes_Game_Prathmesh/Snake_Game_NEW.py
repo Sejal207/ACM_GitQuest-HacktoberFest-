@@ -12,9 +12,9 @@ font = pygame.font.SysFont(None, 50)
 size_x = 610
 size_y = 610
 gameWindow = pygame.display.set_mode((size_x, size_y))
-pygame.display.set_caption('Snakes By Prathmesh')
+pygame.display.set_caption("Snakes By Prathmesh")
 
-bgImage = pygame.image.load('Snake_Game_IMG_2.jpg').convert()
+bgImage = pygame.image.load("Snake_Game_IMG_2.jpg").convert()
 bgImage = pygame.transform.smoothscale(bgImage, (size_x, size_y))
 
 clock = pygame.time.Clock()
@@ -26,6 +26,7 @@ green = (0, 255, 0)
 navy = (0, 255, 255)
 blue = (0, 0, 180)
 black = (0, 0, 0)
+
 
 # Game Welcome Screen
 def wlcScreen():
@@ -39,13 +40,15 @@ def wlcScreen():
                 exit_screen = True
         pygame.display.update()
         clock.tick(60)
-        
+
+
 # Function to draw boundary
 def draw_boundary(surface, color):
-    pygame.draw.rect(surface, color, [15, 30, 5, 555])   # Left boundary
+    pygame.draw.rect(surface, color, [15, 30, 5, 555])  # Left boundary
     pygame.draw.rect(surface, color, [15, 585, 575, 5])  # Bottom boundary
     pygame.draw.rect(surface, color, [590, 35, 5, 555])  # Right boundary
-    pygame.draw.rect(surface, color, [20, 30, 575, 5])   # Top boundary
+    pygame.draw.rect(surface, color, [20, 30, 575, 5])  # Top boundary
+
 
 # Functions to handle file reading and writing
 def get_highscore():
@@ -55,35 +58,50 @@ def get_highscore():
     with open("Highscore.txt", "r") as f:
         return int(f.read())
 
+
 def set_highscore(hiscore):
     with open("Highscore.txt", "w") as f:
         f.write(str(hiscore))
+
 
 # Function to display text
 def showText(text, color, x, y):
     screenScore = font.render(text, True, color)
     gameWindow.blit(screenScore, [x, y])
 
+
 # Updated plotSnake function
-def plotSnake(surface, color, snakeList, snakeSize, snakeColor, eyesListR, eyesListL):
+def plotSnake(surface, snakeList, snakeSize, snakeColor, eyesListR, eyesListL):
     tail_indices = lambda length: (length - 1, length - 2, length - 3)
-    
+
     for index, (x, y) in enumerate(snakeList):
         if index in (0, 1, 2):  # Draw the head as a circle
-            pygame.draw.circle(surface, snakeColor, (x + snakeSize // 2, y + snakeSize // 2), snakeSize // 2)
+            pygame.draw.circle(
+                surface,
+                snakeColor,
+                (x + snakeSize // 2, y + snakeSize // 2),
+                snakeSize // 2,
+            )
         elif index in tail_indices(len(snakeList)):  # Draw the tail as a circle
-            pygame.draw.circle(surface, snakeColor, (x + snakeSize // 2, y + snakeSize // 2), snakeSize // 2)
+            pygame.draw.circle(
+                surface,
+                snakeColor,
+                (x + snakeSize // 2, y + snakeSize // 2),
+                snakeSize // 2,
+            )
         else:  # Draw the body as squares
             pygame.draw.rect(surface, snakeColor, [x, y, snakeSize, snakeSize])
-            
+
     # Plot eyes for the head
     plotEyes(surface, black, eyesListR, 4)
     plotEyes(surface, black, eyesListL, 4)
+
 
 # Function to plot the right eye
 def plotEyes(surface, color, List, size):
     for x, y in List:
         pygame.draw.rect(surface, color, [x, y, size, size])
+
 
 # Function to handle player input
 def handle_input(speed_x, speed_y, a, b, snake_x, snake_y):
@@ -104,6 +122,7 @@ def handle_input(speed_x, speed_y, a, b, snake_x, snake_y):
                 return adjust_speed(speed_x, speed_y)
     return speed_x, speed_y, None, None, None, None
 
+
 # Function to adjust speed for 'Tab' key
 def adjust_speed(speed_x, speed_y):
     if speed_x > 1:
@@ -116,6 +135,7 @@ def adjust_speed(speed_x, speed_y):
         speed_y += 0.2
     return speed_x, speed_y
 
+
 # Function to detect collisions with boundaries or the snake itself
 def detect_collision(snake_x, snake_y, snakeList):
     # Define boundary limits
@@ -125,7 +145,12 @@ def detect_collision(snake_x, snake_y, snakeList):
     bottom_boundary = 585
 
     # Check if the snake hits the boundaries
-    if snake_x < left_boundary or snake_x > right_boundary or snake_y < top_boundary or snake_y > bottom_boundary:
+    if (
+        snake_x < left_boundary
+        or snake_x > right_boundary
+        or snake_y < top_boundary
+        or snake_y > bottom_boundary
+    ):
         return True
 
     # Check if the snake collides with itself
@@ -133,6 +158,7 @@ def detect_collision(snake_x, snake_y, snakeList):
         return True
 
     return False
+
 
 # Game loop logic
 def gameLoop():
@@ -166,7 +192,9 @@ def gameLoop():
                     gameLoop()
             pygame.display.update()
         else:
-            speed_x, speed_y, new_x1, new_x2, new_y1, new_y2 = handle_input(speed_x, speed_y, a, b, snake_x, snake_y)
+            speed_x, speed_y, new_x1, new_x2, new_y1, new_y2 = handle_input(
+                speed_x, speed_y, a, b, snake_x, snake_y
+            )
             if new_x1 and new_x2:
                 snake_x_1, snake_x_2 = new_x1, new_x2
                 snake_y_1, snake_y_2 = new_y1, new_y2
@@ -209,7 +237,7 @@ def gameLoop():
                 del eyesList2[0]
 
             # Plot the snake and eyes using the updated plotSnake function
-            plotSnake(gameWindow, green, snakeList, snakeSize, green, eyesList1, eyesList2)
+            plotSnake(gameWindow, snakeList, snakeSize, green, eyesList1, eyesList2)
 
             # Check collision with boundaries or itself using the new function
             if detect_collision(snake_x, snake_y, snakeList):
@@ -218,6 +246,7 @@ def gameLoop():
             draw_boundary(gameWindow, navy)
             pygame.display.update()
             clock.tick(fps)
+
 
 wlcScreen()
 gameLoop()
