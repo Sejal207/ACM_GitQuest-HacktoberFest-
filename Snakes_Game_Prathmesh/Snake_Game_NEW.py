@@ -6,207 +6,218 @@ from sys import exit
 pygame.init()
 pygame.mixer.init()
 
-# Constants
-FONT_SIZE = 50
-WINDOW_SIZE = (610, 610)
-BG_IMAGE_PATH = 'Snake_Game_IMG.jpg'
-HIT_SOUND_PATH = 'Hit.mp3'
-BG_MUSIC_PATH = 'Nagin.mp3'
-HISCORE_FILE = "Highscore.txt"
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-NAVY = (0, 255, 255)
-BLUE = (0, 0, 180)
-BLACK = (0, 0, 0)
-SNAKE_SIZE = 20
-APPLE_SIZE = 15
-EYE_SIZE = 4
-EYE_OFFSET_X = 2
-EYE_OFFSET_Y = 14
-FPS = 60
+font = pygame.font.SysFont(None, 50)
 
-# Initialize
-font = pygame.font.SysFont(None, FONT_SIZE)
-game_window = pygame.display.set_mode(WINDOW_SIZE)
+# Game Window
+size_x = 610
+size_y = 610
+gameWindow = pygame.display.set_mode((size_x, size_y))
 pygame.display.set_caption('Snakes By Prathmesh')
-bg_image = pygame.image.load(BG_IMAGE_PATH)
-bg_image = pygame.transform.scale(bg_image, WINDOW_SIZE).convert_alpha()
+
+bgImage = pygame.image.load('Snake_Game_IMG_2.jpg').convert()
+bgImage = pygame.transform.smoothscale(bgImage, (size_x, size_y))
+
 clock = pygame.time.Clock()
 
+# Colors
+white = (255, 255, 255)
+red = (255, 0, 0)
+green = (0, 255, 0)
+navy = (0, 255, 255)
+blue = (0, 0, 180)
+black = (0, 0, 0)
 
-def show_text(text, color, x, y):
-    screen_score = font.render(text, True, color)
-    game_window.blit(screen_score, [x, y])
-
-
-def plot_snake(surface, color, snake_list, snake_size):
-    for x, y in snake_list:
-        pygame.draw.rect(surface, color, [x, y, snake_size, snake_size])
-
-
-def plot_eyes(surface, color, head_x, head_y, direction):
-    if direction == "RIGHT":
-        eye1 = (head_x + EYE_OFFSET_X, head_y + EYE_OFFSET_Y)
-        eye2 = (head_x + EYE_OFFSET_X + SNAKE_SIZE // 2, head_y + EYE_OFFSET_Y)
-    elif direction == "LEFT":
-        eye1 = (head_x + EYE_OFFSET_X - SNAKE_SIZE // 2, head_y + EYE_OFFSET_Y)
-        eye2 = (head_x + EYE_OFFSET_X - SNAKE_SIZE, head_y + EYE_OFFSET_Y)
-    elif direction == "UP":
-        eye1 = (head_x + EYE_OFFSET_X, head_y + EYE_OFFSET_Y - SNAKE_SIZE // 2)
-        eye2 = (head_x + EYE_OFFSET_X + SNAKE_SIZE // 2, head_y + EYE_OFFSET_Y - SNAKE_SIZE // 2)
-    else:  # DOWN
-        eye1 = (head_x + EYE_OFFSET_X, head_y + EYE_OFFSET_Y)
-        eye2 = (head_x + EYE_OFFSET_X + SNAKE_SIZE // 2, head_y + EYE_OFFSET_Y)
-    pygame.draw.rect(surface, color, [eye1[0], eye1[1], EYE_SIZE, EYE_SIZE])
-    pygame.draw.rect(surface, color, [eye2[0], eye2[1], EYE_SIZE, EYE_SIZE])
-
-
-def welcome_screen():
+# Game Welcome Screen
+def wlcScreen():
     exit_screen = False
     while not exit_screen:
-        game_window.fill(WHITE)
-        show_text("Welcome To Snakes", BLACK, 140, 280)
-        show_text("Press SpaceBar To Play", BLACK, 110, 330)
+        gameWindow.fill(white)
+        showText("Welcome To Snakes", black, 140, 280)
+        showText("Press SpaceBar To Play", black, 110, 330)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit_screen = True
-                pygame.quit()
-                exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 exit_screen = True
         pygame.display.update()
-        clock.tick(FPS)
+        clock.tick(60)
+        
+# Function to draw boundary
+def draw_boundary(surface, color):
+    pygame.draw.rect(surface, color, [15, 30, 5, 555])   # Left boundary
+    pygame.draw.rect(surface, color, [15, 585, 575, 5])  # Bottom boundary
+    pygame.draw.rect(surface, color, [590, 35, 5, 555])  # Right boundary
+    pygame.draw.rect(surface, color, [20, 30, 575, 5])   # Top boundary
 
-
-def load_hiscore():
-    if not os.path.exists(HISCORE_FILE):
-        with open(HISCORE_FILE, "w") as f:
+# Functions to handle file reading and writing
+def get_highscore():
+    if not os.path.exists("Highscore.txt"):
+        with open("Highscore.txt", "w") as f:
             f.write("0")
-    with open(HISCORE_FILE, "r") as f:
+    with open("Highscore.txt", "r") as f:
         return int(f.read())
 
-
-def save_hiscore(hiscore):
-    with open(HISCORE_FILE, "w") as f:
+def set_highscore(hiscore):
+    with open("Highscore.txt", "w") as f:
         f.write(str(hiscore))
 
+# Function to display text
+def showText(text, color, x, y):
+    screenScore = font.render(text, True, color)
+    gameWindow.blit(screenScore, [x, y])
 
-def reset_game_state():
-    return {
-        'snake_x': 25,
-        'snake_y': 40,
-        'snake_list': [],
-        'snake_len': 1,
-        'speed_x': 0,
-        'speed_y': 0,
-        'score': 0,
-        'apple_x': random.randint(25, 570),
-        'apple_y': random.randint(40, 570),
-        'direction': "RIGHT",
-        'game_over': False
-    }
+# Updated plotSnake function
+def plotSnake(surface, color, snakeList, snakeSize, snakeColor, eyesListR, eyesListL):
+    tail_indices = lambda length: (length - 1, length - 2, length - 3)
+    
+    for index, (x, y) in enumerate(snakeList):
+        if index in (0, 1, 2):  # Draw the head as a circle
+            pygame.draw.circle(surface, snakeColor, (x + snakeSize // 2, y + snakeSize // 2), snakeSize // 2)
+        elif index in tail_indices(len(snakeList)):  # Draw the tail as a circle
+            pygame.draw.circle(surface, snakeColor, (x + snakeSize // 2, y + snakeSize // 2), snakeSize // 2)
+        else:  # Draw the body as squares
+            pygame.draw.rect(surface, snakeColor, [x, y, snakeSize, snakeSize])
+            
+    # Plot eyes for the head
+    plotEyes(surface, black, eyesListR, 4)
+    plotEyes(surface, black, eyesListL, 4)
 
+# Function to plot the right eye
+def plotEyes(surface, color, List, size):
+    for x, y in List:
+        pygame.draw.rect(surface, color, [x, y, size, size])
 
-def game_loop():
-    state = reset_game_state()
-    hiscore = load_hiscore()
+# Function to handle player input
+def handle_input(speed_x, speed_y, a, b, snake_x, snake_y):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                return 2, 0, snake_x + b, snake_x + b, snake_y + a, snake_y + b
+            if event.key == pygame.K_LEFT:
+                return -2, 0, snake_x + a, snake_x + a, snake_y + a, snake_y + b
+            if event.key == pygame.K_UP:
+                return 0, -2, snake_x + a, snake_x + b, snake_y + a, snake_y + a
+            if event.key == pygame.K_DOWN:
+                return 0, 2, snake_x + a, snake_x + b, snake_y + b, snake_y + b
+            if event.key == pygame.K_TAB:
+                return adjust_speed(speed_x, speed_y)
+    return speed_x, speed_y, None, None, None, None
 
+# Function to adjust speed for 'Tab' key
+def adjust_speed(speed_x, speed_y):
+    if speed_x > 1:
+        speed_x -= 0.2
+    elif speed_x < -1:
+        speed_x += 0.2
+    if speed_y > 1:
+        speed_y -= 0.2
+    elif speed_y < -1:
+        speed_y += 0.2
+    return speed_x, speed_y
+
+# Function to detect collisions with boundaries or the snake itself
+def detect_collision(snake_x, snake_y, snakeList):
+    # Define boundary limits
+    left_boundary = 15
+    right_boundary = 590
+    top_boundary = 30
+    bottom_boundary = 585
+
+    # Check if the snake hits the boundaries
+    if snake_x < left_boundary or snake_x > right_boundary or snake_y < top_boundary or snake_y > bottom_boundary:
+        return True
+
+    # Check if the snake collides with itself
+    if [snake_x, snake_y] in snakeList[:-1]:
+        return True
+
+    return False
+
+# Game loop logic
+def gameLoop():
+    snake_x, snake_y = 25, 40
+    snakeSize, snakeLen, score, fps = 20, 1, 0, 60
+    apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
+    snakeList, eyesList1, eyesList2 = [], [], []
+    speed_x, speed_y = 0, 0
+    a, b = 2, 14
+    snake_x_1, snake_x_2 = snake_x + a, snake_x + b
+    snake_y_1, snake_y_2 = snake_y + b, snake_y + b
+    eyesList1.append([snake_x_1, snake_y_1])
+    eyesList2.append([snake_x_2, snake_y_2])
+
+    hiscore = get_highscore()
+
+    game_over = False
     while True:
-        if state['game_over']:
-            save_hiscore(hiscore)
-            game_window.fill(NAVY)
-            show_text(f"Score: {state['score']}", BLUE, 15, 0)
-            show_text(f"Hiscore: {hiscore}", BLUE, 390, 0)
-            show_text("Game Over", RED, 200, 300)
-            show_text("Press Enter To Continue", BLACK, 100, 355)
+        if game_over:
+            set_highscore(hiscore)
+            gameWindow.fill(navy)
+            showText("Score: " + str(score), blue, 15, 0)
+            showText("Hiscore: " + str(hiscore), blue, 390, 0)
+            showText("Game Over", red, 200, 300)
+            showText("Press Enter To Continue", black, 100, 355)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    state = reset_game_state()
+                    gameLoop()
             pygame.display.update()
-            continue
+        else:
+            speed_x, speed_y, new_x1, new_x2, new_y1, new_y2 = handle_input(speed_x, speed_y, a, b, snake_x, snake_y)
+            if new_x1 and new_x2:
+                snake_x_1, snake_x_2 = new_x1, new_x2
+                snake_y_1, snake_y_2 = new_y1, new_y2
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT and state['speed_x'] == 0:
-                    state['speed_x'] = 2
-                    state['speed_y'] = 0
-                    state['direction'] = "RIGHT"
-                if event.key == pygame.K_LEFT and state['speed_x'] == 0:
-                    state['speed_x'] = -2
-                    state['speed_y'] = 0
-                    state['direction'] = "LEFT"
-                if event.key == pygame.K_UP and state['speed_y'] == 0:
-                    state['speed_x'] = 0
-                    state['speed_y'] = -2
-                    state['direction'] = "UP"
-                if event.key == pygame.K_DOWN and state['speed_y'] == 0:
-                    state['speed_x'] = 0
-                    state['speed_y'] = 2
-                    state['direction'] = "DOWN"
-                if event.key == pygame.K_TAB:
-                    if state['speed_x'] != 0:
-                        state['speed_x'] = max(min(state['speed_x'] * 0.8, 2), -2)
-                    if state['speed_y'] != 0:
-                        state['speed_y'] = max(min(state['speed_y'] * 0.8, 2), -2)
+            snake_x += speed_x
+            snake_y += speed_y
+            snake_x_1 += speed_x
+            snake_y_1 += speed_y
+            snake_x_2 += speed_x
+            snake_y_2 += speed_y
 
-        # Apple Collision
-        if abs(state['snake_x'] - state['apple_x']) < 10 and abs(state['snake_y'] - state['apple_y']) < 10:
-            state['score'] += 10
-            state['apple_x'] = random.randint(25, 570)
-            state['apple_y'] = random.randint(40, 570)
-            state['snake_len'] += SNAKE_SIZE
-            if state['score'] > hiscore:
-                hiscore = state['score']
+            gameWindow.fill(white)
+            gameWindow.blit(bgImage, (0, 0))
 
-        # Update Snake Position
-        state['snake_x'] += state['speed_x']
-        state['snake_y'] += state['speed_y']
+            showText("Score: " + str(score), blue, 15, 0)
+            showText("Hiscore: " + str(hiscore), blue, 390, 0)
 
-        head = [state['snake_x'], state['snake_y']]
-        state['snake_list'].append(head)
-        if len(state['snake_list']) > state['snake_len']:
-            del state['snake_list'][0]
+            pygame.draw.rect(gameWindow, red, [apple_x, apple_y, 15, 15])
 
-        # Collision with itself
-        if head in state['snake_list'][:-1]:
-            pygame.mixer.music.load(HIT_SOUND_PATH)
-            pygame.mixer.music.play()
-            state['game_over'] = True
+            # Update snake and eyes
+            head = [snake_x, snake_y]
+            eyes1, eyes2 = [snake_x_1, snake_y_1], [snake_x_2, snake_y_2]
+            snakeList.append(head)
+            eyesList1.append(eyes1)
+            eyesList2.append(eyes2)
 
-        # Collision with boundaries
-        if state['snake_x'] < 20 or state['snake_x'] + SNAKE_SIZE >= 590 or state['snake_y'] < 35 or state[
-            'snake_y'] + SNAKE_SIZE >= 585:
-            pygame.mixer.music.load(HIT_SOUND_PATH)
-            pygame.mixer.music.play()
-            state['game_over'] = True
+            # Snake eats apple
+            if abs(snake_x - apple_x) < 10 and abs(snake_y - apple_y) < 10:
+                score += 10
+                apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
+                snakeLen += snakeSize
+                if score > hiscore:
+                    hiscore = score
 
-        game_window.fill(WHITE)
-        game_window.blit(bg_image, (0, 0))
-        show_text(f"Score: {state['score']}", BLUE, 15, 0)
-        show_text(f"Hiscore: {hiscore}", BLUE, 390, 0)
-        pygame.draw.rect(game_window, RED, [state['apple_x'], state['apple_y'], APPLE_SIZE, APPLE_SIZE])
+            # Keep snake length in check
+            if len(snakeList) > snakeLen:
+                del snakeList[0]
+            if len(eyesList1) > 1 and len(eyesList2) > 1:
+                del eyesList1[0]
+                del eyesList2[0]
 
-        plot_snake(game_window, GREEN, state['snake_list'], SNAKE_SIZE)
+            # Plot the snake and eyes using the updated plotSnake function
+            plotSnake(gameWindow, green, snakeList, snakeSize, green, eyesList1, eyesList2)
 
-        pygame.draw.rect(game_window, NAVY, [15, 30, 5, 555])
-        pygame.draw.rect(game_window, NAVY, [15, 585, 575, 5])
-        pygame.draw.rect(game_window, NAVY, [590, 35, 5, 555])
-        pygame.draw.rect(game_window, NAVY, [20, 30, 575, 5])
+            # Check collision with boundaries or itself using the new function
+            if detect_collision(snake_x, snake_y, snakeList):
+                game_over = True
 
-        pygame.display.update()
-        clock.tick(FPS)
+            draw_boundary(gameWindow, navy)
+            pygame.display.update()
+            clock.tick(fps)
 
-
-welcome_screen()
-pygame.mixer.music.load(BG_MUSIC_PATH)
-pygame.mixer.music.play(-1)
-game_loop()
-pygame.quit()
-exit()
+wlcScreen()
+gameLoop()
