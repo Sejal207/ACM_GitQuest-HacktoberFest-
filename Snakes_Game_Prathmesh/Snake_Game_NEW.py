@@ -77,20 +77,6 @@ class Snake:
             self.eyes_l = [[head[0] + 14, head[1] + self.size // 2]]
 
     def draw(self, surface):
-        """
-        for index, segment in enumerate(self.body):
-            if index < 3 or index >= len(self.body) - 3:
-                pygame.draw.circle(
-                    surface,
-                    green,
-                    (segment[0] + self.size // 2, segment[1] + self.size // 2),
-                    self.size // 2,
-                )
-            else:
-                pygame.draw.rect(
-                    surface, green, [segment[0], segment[1], self.size, self.size]
-                )
-        """
         for segment in self.body:
             pygame.draw.circle(surface, green,
                 (segment[0] + self.size // 2, segment[1] + self.size // 2),
@@ -99,6 +85,24 @@ class Snake:
         
         plotEyes(surface, black, self.eyes_r, 4)
         plotEyes(surface, black, self.eyes_l, 4)
+
+    def get_head_hitbox(self):
+        # Returns the hitbox of the snake's head
+        return pygame.Rect(self.body[-1][0], self.body[-1][1], self.size, self.size)
+
+
+# Apple class with position, rendering, and hitbox
+class Apple:
+    def __init__(self):
+        self.x, self.y = random.randint(25, 570), random.randint(40, 570)
+        self.size = 15
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, red, [self.x, self.y, self.size, self.size])
+
+    def get_hitbox(self):
+        # Returns the hitbox of the apple
+        return pygame.Rect(self.x, self.y, self.size, self.size)
 
 
 # Function to draw boundary
@@ -180,7 +184,7 @@ def gameLoop():
     score = 0
     fps = 60
 
-    apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
+    apple = Apple()
     hiscore = get_highscore()
 
     game_over = False
@@ -202,13 +206,10 @@ def gameLoop():
         else:
             snake.move()
 
-            # Snake eats apple
-            if (
-                abs(snake.body[-1][0] - apple_x) < 10
-                and abs(snake.body[-1][1] - apple_y) < 10
-            ):
+            # Check for collision between snake head and apple
+            if snake.get_head_hitbox().colliderect(apple.get_hitbox()):
                 score += 10
-                apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
+                apple = Apple()  # Generate new apple
                 snakeLen += snake.size
                 if score > hiscore:
                     hiscore = score
@@ -222,9 +223,8 @@ def gameLoop():
             showText("Score: " + str(score), blue, 15, 0)
             showText("Hiscore: " + str(hiscore), blue, 390, 0)
 
-            pygame.draw.rect(gameWindow, red, [apple_x, apple_y, 15, 15])
-
-            snake.draw(gameWindow)
+            apple.draw(gameWindow)  # Draw the apple
+            snake.draw(gameWindow)  # Draw the snake
 
             if detect_collision(snake, snake.body):
                 game_over = True
@@ -234,6 +234,5 @@ def gameLoop():
             clock.tick(fps)
 
 
-# Initialize and run the game
 wlcScreen()
 gameLoop()
