@@ -14,7 +14,7 @@ size_y = 610
 gameWindow = pygame.display.set_mode((size_x, size_y))
 pygame.display.set_caption("Snakes By Prathmesh")
 
-bgImage = pygame.image.load("Snake_Game_IMG_2.jpg").convert()
+bgImage = pygame.image.load("Snake_Game_IMG.jpg").convert()
 bgImage = pygame.transform.smoothscale(bgImage, (size_x, size_y))
 
 clock = pygame.time.Clock()
@@ -28,18 +28,74 @@ blue = (0, 0, 180)
 black = (0, 0, 0)
 
 
-# Game Welcome Screen
-def wlcScreen():
-    exit_screen = False
-    while not exit_screen:
-        gameWindow.fill(white)
-        showText("Welcome To Snakes", black, 140, 280)
-        showText("Press SpaceBar To Play", black, 110, 330)
+# Snake class with body, eyes, and movement logic
+class Snake:
+    def __init__(self, x, y, size):
+        self.size = size
+        self.body = [[x, y]]
+        self.eyes_r = [[x + 2, y + self.size // 2]]  # Right eye
+        self.eyes_l = [[x + 14, y + self.size // 2]]  # Left eye
+        self.direction = "DOWN"
+        self.speed_x = 0
+        self.speed_y = 0
+
+    def move(self):
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                exit_screen = True
-        pygame.display.update()
-        clock.tick(60)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT and self.direction != "LEFT":
+                    self.speed_x, self.speed_y = 2, 0
+                    self.direction = "RIGHT"
+                elif event.key == pygame.K_LEFT and self.direction != "RIGHT":
+                    self.speed_x, self.speed_y = -2, 0
+                    self.direction = "LEFT"
+                elif event.key == pygame.K_UP and self.direction != "DOWN":
+                    self.speed_x, self.speed_y = 0, -2
+                    self.direction = "UP"
+                elif event.key == pygame.K_DOWN and self.direction != "UP":
+                    self.speed_x, self.speed_y = 0, 2
+                    self.direction = "DOWN"
+
+        # Update snake body
+        head = [self.body[-1][0] + self.speed_x, self.body[-1][1] + self.speed_y]
+        self.body.append(head)
+
+        # Update eyes based on direction
+        if self.direction == "LEFT":
+            self.eyes_r = [[head[0] + self.size - 14, head[1] + 2]]
+            self.eyes_l = [[head[0] + self.size - 14, head[1] + 14]]
+        if self.direction == "RIGHT":
+            self.eyes_r = [[head[0] + self.size // 2, head[1] + 2]]
+            self.eyes_l = [[head[0] + self.size // 2, head[1] + 14]]
+        if self.direction == "UP":
+            self.eyes_r = [[head[0] + 14, head[1] + self.size - 14]]
+            self.eyes_l = [[head[0] + 2, head[1] + self.size -14]]
+        if self.direction == "DOWN":
+            self.eyes_r = [[head[0] + 2, head[1] + self.size // 2]]
+            self.eyes_l = [[head[0] + 14, head[1] + self.size // 2]]
+
+    def draw(self, surface):
+        # Draw the snake's body
+        for index, segment in enumerate(self.body):
+            if index == len(self.body) - 1:
+                # Draw head
+                pygame.draw.circle(
+                    surface,
+                    green,
+                    (segment[0] + self.size // 2, segment[1] + self.size // 2),
+                    self.size // 2,
+                )
+            else:
+                # Draw body
+                pygame.draw.rect(
+                    surface, green, [segment[0], segment[1], self.size, self.size]
+                )
+
+        # Draw eyes
+        plotEyes(surface, black, self.eyes_r, 4)
+        plotEyes(surface, black, self.eyes_l, 4)
 
 
 # Function to draw boundary
@@ -50,129 +106,78 @@ def draw_boundary(surface, color):
     pygame.draw.rect(surface, color, [20, 30, 575, 5])  # Top boundary
 
 
-# Functions to handle file reading and writing
-def get_highscore():
-    if not os.path.exists("Highscore.txt"):
-        with open("Highscore.txt", "w") as f:
-            f.write("0")
-    with open("Highscore.txt", "r") as f:
-        return int(f.read())
-
-
-def set_highscore(hiscore):
-    with open("Highscore.txt", "w") as f:
-        f.write(str(hiscore))
-
-
-# Function to display text
-def showText(text, color, x, y):
-    screenScore = font.render(text, True, color)
-    gameWindow.blit(screenScore, [x, y])
-
-
-# Updated plotSnake function
-def plotSnake(surface, snakeList, snakeSize, snakeColor, eyesListR, eyesListL):
-    tail_indices = lambda length: (length - 1, length - 2, length - 3)
-
-    for index, (x, y) in enumerate(snakeList):
-        if index in (0, 1, 2):  # Draw the head as a circle
-            pygame.draw.circle(
-                surface,
-                snakeColor,
-                (x + snakeSize // 2, y + snakeSize // 2),
-                snakeSize // 2,
-            )
-        elif index in tail_indices(len(snakeList)):  # Draw the tail as a circle
-            pygame.draw.circle(
-                surface,
-                snakeColor,
-                (x + snakeSize // 2, y + snakeSize // 2),
-                snakeSize // 2,
-            )
-        else:  # Draw the body as squares
-            pygame.draw.rect(surface, snakeColor, [x, y, snakeSize, snakeSize])
-
-    # Plot eyes for the head
-    plotEyes(surface, black, eyesListR, 4)
-    plotEyes(surface, black, eyesListL, 4)
-
-
-# Function to plot the right eye
-def plotEyes(surface, color, List, size):
-    for x, y in List:
+# Function to plot the eyes
+def plotEyes(surface, color, eye_list, size):
+    for x, y in eye_list:
         pygame.draw.rect(surface, color, [x, y, size, size])
 
 
-# Function to handle player input
-def handle_input(speed_x, speed_y, a, b, snake_x, snake_y):
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                return 2, 0, snake_x + b, snake_x + b, snake_y + a, snake_y + b
-            if event.key == pygame.K_LEFT:
-                return -2, 0, snake_x + a, snake_x + a, snake_y + a, snake_y + b
-            if event.key == pygame.K_UP:
-                return 0, -2, snake_x + a, snake_x + b, snake_y + a, snake_y + a
-            if event.key == pygame.K_DOWN:
-                return 0, 2, snake_x + a, snake_x + b, snake_y + b, snake_y + b
-            if event.key == pygame.K_TAB:
-                return adjust_speed(speed_x, speed_y)
-    return speed_x, speed_y, None, None, None, None
+# Function to display text on the screen
+def showText(text, color, x, y):
+    screen_text = font.render(text, True, color)
+    gameWindow.blit(screen_text, [x, y])
 
 
-# Function to adjust speed for 'Tab' key
-def adjust_speed(speed_x, speed_y):
-    if speed_x > 1:
-        speed_x -= 0.2
-    elif speed_x < -1:
-        speed_x += 0.2
-    if speed_y > 1:
-        speed_y -= 0.2
-    elif speed_y < -1:
-        speed_y += 0.2
-    return speed_x, speed_y
+# Function to get the high score from a file
+def get_highscore():
+    if not os.path.exists("highscore.txt"):
+        return 0
+    with open("highscore.txt", "r") as f:
+        return int(f.read())
+
+
+# Function to set the high score in a file
+def set_highscore(hiscore):
+    with open("highscore.txt", "w") as f:
+        f.write(str(hiscore))
+
+
+# Function to display the welcome screen
+def wlcScreen():
+    gameWindow.fill(white)
+    showText("Welcome to Snakes", blue, 160, 250)
+    showText("Press Space To Play", black, 130, 290)
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    return
 
 
 # Function to detect collisions with boundaries or the snake itself
-def detect_collision(snake_x, snake_y, snakeList):
-    # Define boundary limits
+def detect_collision(snake, snakeList):
     left_boundary = 15
     right_boundary = 590
     top_boundary = 30
     bottom_boundary = 585
 
-    # Check if the snake hits the boundaries
     if (
-        snake_x < left_boundary
-        or snake_x > right_boundary
-        or snake_y < top_boundary
-        or snake_y > bottom_boundary
+        snake.body[-1][0] < left_boundary
+        or snake.body[-1][0] > right_boundary
+        or snake.body[-1][1] < top_boundary
+        or snake.body[-1][1] > bottom_boundary
     ):
         return True
 
-    # Check if the snake collides with itself
-    if [snake_x, snake_y] in snakeList[:-1]:
+    if snake.body[-1] in snakeList[:-1]:
         return True
 
     return False
 
 
-# Game loop logic
+# Game loop
 def gameLoop():
-    snake_x, snake_y = 25, 40
-    snakeSize, snakeLen, score, fps = 20, 1, 0, 60
-    apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
-    snakeList, eyesList1, eyesList2 = [], [], []
-    speed_x, speed_y = 0, 0
-    a, b = 2, 14
-    snake_x_1, snake_x_2 = snake_x + a, snake_x + b
-    snake_y_1, snake_y_2 = snake_y + b, snake_y + b
-    eyesList1.append([snake_x_1, snake_y_1])
-    eyesList2.append([snake_x_2, snake_y_2])
+    snake = Snake(25, 40, 20)
+    snakeLen = 1
+    score = 0
+    fps = 60
 
+    apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
     hiscore = get_highscore()
 
     game_over = False
@@ -192,19 +197,21 @@ def gameLoop():
                     gameLoop()
             pygame.display.update()
         else:
-            speed_x, speed_y, new_x1, new_x2, new_y1, new_y2 = handle_input(
-                speed_x, speed_y, a, b, snake_x, snake_y
-            )
-            if new_x1 and new_x2:
-                snake_x_1, snake_x_2 = new_x1, new_x2
-                snake_y_1, snake_y_2 = new_y1, new_y2
+            snake.move()
 
-            snake_x += speed_x
-            snake_y += speed_y
-            snake_x_1 += speed_x
-            snake_y_1 += speed_y
-            snake_x_2 += speed_x
-            snake_y_2 += speed_y
+            # Snake eats apple
+            if (
+                abs(snake.body[-1][0] - apple_x) < 10
+                and abs(snake.body[-1][1] - apple_y) < 10
+            ):
+                score += 10
+                apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
+                snakeLen += snake.size
+                if score > hiscore:
+                    hiscore = score
+
+            if len(snake.body) > snakeLen:
+                del snake.body[0]
 
             gameWindow.fill(white)
             gameWindow.blit(bgImage, (0, 0))
@@ -214,33 +221,9 @@ def gameLoop():
 
             pygame.draw.rect(gameWindow, red, [apple_x, apple_y, 15, 15])
 
-            # Update snake and eyes
-            head = [snake_x, snake_y]
-            eyes1, eyes2 = [snake_x_1, snake_y_1], [snake_x_2, snake_y_2]
-            snakeList.append(head)
-            eyesList1.append(eyes1)
-            eyesList2.append(eyes2)
+            snake.draw(gameWindow)
 
-            # Snake eats apple
-            if abs(snake_x - apple_x) < 10 and abs(snake_y - apple_y) < 10:
-                score += 10
-                apple_x, apple_y = random.randint(25, 570), random.randint(40, 570)
-                snakeLen += snakeSize
-                if score > hiscore:
-                    hiscore = score
-
-            # Keep snake length in check
-            if len(snakeList) > snakeLen:
-                del snakeList[0]
-            if len(eyesList1) > 1 and len(eyesList2) > 1:
-                del eyesList1[0]
-                del eyesList2[0]
-
-            # Plot the snake and eyes using the updated plotSnake function
-            plotSnake(gameWindow, snakeList, snakeSize, green, eyesList1, eyesList2)
-
-            # Check collision with boundaries or itself using the new function
-            if detect_collision(snake_x, snake_y, snakeList):
+            if detect_collision(snake, snake.body):
                 game_over = True
 
             draw_boundary(gameWindow, navy)
@@ -248,5 +231,6 @@ def gameLoop():
             clock.tick(fps)
 
 
+# Initialize and run the game
 wlcScreen()
 gameLoop()
