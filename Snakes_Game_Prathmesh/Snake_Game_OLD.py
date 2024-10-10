@@ -241,7 +241,6 @@ def gameLoop():
 
             if len(snakeList) > snakeLen:
                 del snakeList[0]
-            print(snakeList)
 
             if head in snakeList[:-1]:
                 pygame.mixer.music.load('Hit.mp3')
