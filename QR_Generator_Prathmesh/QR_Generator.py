@@ -1,9 +1,7 @@
-import os
-from tkinter import *
-from tkinter import filedialog, messagebox
+from tkinter import Tk, Label, Entry, Button, Frame, StringVar, filedialog, RIDGE
+from os import getcwd, path, makedirs
 import qrcode
 from PIL import Image, ImageTk
-from resizeimage import resizeimage
 
 
 class QrGenerator:
@@ -32,7 +30,7 @@ class QrGenerator:
         self.var_name = StringVar()
         self.var_age = StringVar()
         self.var_education = StringVar()
-        self.var_directory = StringVar(value=os.getcwd())
+        self.var_directory = StringVar(value=getcwd())
         self.msg = None
         self.img = None
 
@@ -202,8 +200,14 @@ class QrGenerator:
 
     def browse_directory(self):
         directory = filedialog.askdirectory()
+
         if directory:
-            self.var_directory.set(directory)
+            qr_folder = path.join(directory, "QR_Codes")
+
+            if not path.exists(qr_folder):
+                makedirs(qr_folder)
+
+            self.var_directory.set(qr_folder)
 
     def generate(self):
         # Validations
@@ -211,7 +215,7 @@ class QrGenerator:
             self.show_message("All Fields Are Required!", "red")
             return
 
-        if not os.path.exists(self.var_directory.get()):
+        if not path.exists(self.var_directory.get()):
             self.show_message("Location Not Found", "red")
             return
 
@@ -219,12 +223,12 @@ class QrGenerator:
             qr_data = f"Phone No: {self.var_phone_no.get()}\nName: {self.var_name.get()}\nAge: {self.var_age.get()}\nEducation: {self.var_education.get()}"
             qr_code = qrcode.make(qr_data)
 
-            save_path = os.path.join(self.var_directory.get(), f"Phone_No_{self.var_phone_no.get()}.png")
+            save_path = path.join(self.var_directory.get(), f"Phone_No_{self.var_phone_no.get()}.png")
             qr_code.save(save_path)
 
             # Load and resize image
             qr_image = Image.open(save_path)
-            qr_image = qr_image.resize((200, 200), Image.ANTIALIAS)
+            qr_image = qr_image.resize((200, 200), Image.Resampling.LANCZOS)
             self.img = ImageTk.PhotoImage(qr_image)
 
             self.qr_code.config(image=self.img)
