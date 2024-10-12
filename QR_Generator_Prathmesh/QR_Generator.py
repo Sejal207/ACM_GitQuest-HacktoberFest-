@@ -1,13 +1,14 @@
 import os
 from tkinter import *
+from tkinter import filedialog, messagebox
 import qrcode
-from PIL import ImageTk
+from PIL import Image, ImageTk
 from resizeimage import resizeimage
 
 
 class QrGenerator:
-    def __init__(self, self_root):
-        self.root = self_root
+    def __init__(self, root):
+        self.root = root
         self.root.geometry("900x500+200+50")
         self.root.title("QR Generator | Developed by Prathmesh")
         self.root.resizable(False, False)
@@ -31,9 +32,7 @@ class QrGenerator:
         self.var_name = StringVar()
         self.var_age = StringVar()
         self.var_education = StringVar()
-        self.var_directory = StringVar()
-        self.var_directory.set(os.getcwd())
-        self.wrn_msg = None
+        self.var_directory = StringVar(value=os.getcwd())
         self.msg = None
         self.img = None
 
@@ -137,6 +136,16 @@ class QrGenerator:
         )
         txt_directory.place(x=200, y=280)
 
+        btn_browse = Button(
+            emp_frame,
+            text="Browse",
+            command=self.browse_directory,
+            font=("times new roman", 12, "bold"),
+            bg="#2196f3",
+            fg="black",
+        )
+        btn_browse.place(x=400, y=280, width=80)
+
         # ====Buttons====
         btn_generate = Button(
             emp_frame,
@@ -158,10 +167,9 @@ class QrGenerator:
         )
         btn_clear.place(x=254, y=220, width=150, height=30)
 
-        self.msg = ""
         self.wrn_msg = Label(
             emp_frame,
-            text=self.msg,
+            text="",
             font=("times new roman", 15, "bold"),
             bg="white",
             fg="green",
@@ -192,56 +200,49 @@ class QrGenerator:
         )
         self.qr_code.place(x=22, y=100, width=200, height=200)
 
+    def browse_directory(self):
+        directory = filedialog.askdirectory()
+        if directory:
+            self.var_directory.set(directory)
+
     def generate(self):
-        if self.var_phone_no.get() == "" or self.var_name.get() == "":
-            self.msg = "All Fields Are Required!"
-            self.wrn_msg.config(text=self.msg, fg="red")
+        # Validations
+        if not self.var_phone_no.get() or not self.var_name.get() or not self.var_age.get() or not self.var_education.get():
+            self.show_message("All Fields Are Required!", "red")
+            return
 
-        elif self.var_age.get() == "" or self.var_education.get() == "":
-            self.msg = "All Fields Are Required!"
-            self.wrn_msg.config(text=self.msg, fg="red")
+        if not os.path.exists(self.var_directory.get()):
+            self.show_message("Location Not Found", "red")
+            return
 
-        elif self.var_directory.get() == "":
-            self.var_directory.set(os.getcwd())
-
-        elif not os.path.exists(self.var_directory.get()):
-            self.msg = "Location Not Found"
-            self.wrn_msg.config(text=self.msg, fg="red")
-
-        else:
-            # ====Required Directory Change====
-            if self.var_directory.get() != os.getcwd():
-                os.chdir(self.var_directory.get())
-
-            if not os.path.exists("QR Codes"):
-                os.mkdir(os.path.join(os.getcwd(), "QR Codes"))
-
-            # ====QR Creation And Update====
-            qr_data = f"""
-            Phone No :- {self.var_phone_no.get()}
-            Name :- {self.var_name.get()}
-            Age :- {self.var_age.get()}
-            Education :- {self.var_education.get()}"""
+        try:
+            qr_data = f"Phone No: {self.var_phone_no.get()}\nName: {self.var_name.get()}\nAge: {self.var_age.get()}\nEducation: {self.var_education.get()}"
             qr_code = qrcode.make(qr_data)
 
-            qr_code.save(f"QR Codes/Phone_No_{self.var_phone_no.get()}.png")
+            save_path = os.path.join(self.var_directory.get(), f"Phone_No_{self.var_phone_no.get()}.png")
+            qr_code.save(save_path)
 
-            qr_code = resizeimage.resize_cover(qr_code, [200, 200])
-            self.img = ImageTk.PhotoImage(qr_code)
+            # Load and resize image
+            qr_image = Image.open(save_path)
+            qr_image = qr_image.resize((200, 200), Image.ANTIALIAS)
+            self.img = ImageTk.PhotoImage(qr_image)
+
             self.qr_code.config(image=self.img)
+            self.show_message("QR Code Generated Successfully", "green")
 
-            # ====Update Notification====
-            self.msg = "QR Code Generated Successfully"
-            self.wrn_msg.config(text=self.msg, fg="green")
+        except Exception as e:
+            self.show_message(f"Error: {e}", "red")
+
+    def show_message(self, msg, color):
+        self.wrn_msg.config(text=msg, fg=color)
 
     def clear(self):
         self.var_phone_no.set("")
         self.var_name.set("")
         self.var_age.set("")
         self.var_education.set("")
-        self.msg = ""
-        self.wrn_msg.config(text=self.msg)
         self.qr_code.config(image="")
+        self.show_message("", "")
 
 
 root = Tk()
