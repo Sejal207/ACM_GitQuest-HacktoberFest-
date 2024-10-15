@@ -20,25 +20,30 @@ This repository contains a Python-based QR code generator that allows users to c
 
 ## Installation and Usage
 
-### Step 1: Clone the Repository
-Clone this repository to your local machine:
+### Step 1: Fork the Repository
+Fork this repository to your GitHub account by clicking the "Fork" button at the top of this page.
+
+### Step 2: Clone the Forked Repository
+After forking, clone the repository from **your account** to your local machine:
 ```bash
-git clone https://github.com/your-repository/qr_generator.git
+git clone https://github.com/<your-username>/ACM-GitQuest-HacktoberFest-2024.git
+cd ACM-GitQuest-HacktoberFest-2024
+git checkout qr-generator-application
 ```
 
-### Step 2: Install Dependencies
+### Step 3: Install Dependencies
 Navigate to the project directory and install the required dependencies using the following command:
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 3: Run the Application
+### Step 4: Run the Application
 To start the application, run:
 ```bash
 python QR_Generator.py
 ```
 
-### Step 4: Using the Application
+### Step 5: Using the Application
 - Enter your **phone number**, **name**, **age**, and **education** into the respective fields.
 - Use the **Browse** button to choose a directory for saving your QR code.
 - Click **Generate** to create the QR code, which will display within the application.
@@ -57,6 +62,7 @@ If you want to package this app as an executable:
 ## Project Structure
 ```plaintext
 ├── .gitignore           # Ignored files/folders for version control
+├── LICENSE              # MIT License
 ├── QR_Generator.py      # Main application script
 ├── README.md            # Project documentation
 ├── requirements.txt     # List of dependencies
