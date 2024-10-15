@@ -49,6 +49,7 @@ python Age_Insight_Application.py
 ## Project Structure
 ```plaintext
 ├── .gitignore                  # Ignored files/folders for version control
+├── LICENSE                     # MIT License
 ├── Age_Insight_Application.py  # Main application script
 ├── README.md                   # Project documentation
 ├── requirements.txt            # List of dependencies
