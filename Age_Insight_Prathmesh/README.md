@@ -44,7 +44,6 @@ python Age_Insight_Application.py
 ## Project Structure
 ```plaintext
 ├── .gitignore                  # Ignored files/folders for version control
-├── Age_Icon.jpg                # Application icon
 ├── Age_Insight_Application.py  # Main application script
 ├── README.md                   # Project documentation
 ├── requirements.txt            # List of dependencies
