@@ -18,25 +18,30 @@ The Age Insight Application is a Python-based tool that calculates a person's ag
 
 ## Installation and Usage
 
-### Step 1: Clone the Repository
-Clone this repository to your local machine:
+### Step 1: Fork the Repository
+Fork this repository to your GitHub account by clicking the "Fork" button at the top of this page.
+
+### Step 2: Clone the Forked Repository
+After forking, clone the repository from **your account** to your local machine:
 ```bash
-git clone https://github.com/your-repository/age_insight_app.git
+git clone https://github.com/<your-username>/ACM-GitQuest-HacktoberFest-2024.git
+cd ACM-GitQuest-HacktoberFest-2024
+git checkout age-insight-application
 ```
 
-### Step 2: Install Dependencies
+### Step 3: Install Dependencies
 Navigate to the project directory and install the required dependencies using the following command:
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 3: Run the Application
+### Step 4: Run the Application
 To start the application, run:
 ```bash
 python Age_Insight_Application.py
 ```
 
-### Step 4: Using the Application
+### Step 5: Using the Application
 - Select your **birth date** from the calendar.
 - The application will display the **current date** and calculate your age in **days**, **months**, and **years**.
 - The **current time** is displayed and updates in real-time.
