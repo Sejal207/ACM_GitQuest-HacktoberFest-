@@ -1,0 +1,171 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    background: #1D586E;
+}
+
+*{
+    margin: 0;
+}
+
+a{
+    text-decoration: none;
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #010546;
+    height: 7%;
+}
+
+.homebtn{
+    display: flex;
+    background-color: white;
+    border-radius: 15px;
+    padding: 0.5rem;
+    height: 80%;
+}
+
+h1{
+    color: black;
+    font-family: Syne;
+    font-weight: 800;
+}
+
+.leftside{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+
+.aboutbtn{
+    display: flex;
+    background-color: white;
+    border-radius: 15px;
+    padding: .9rem 2rem;
+    height: 70%;
+}
+
+.buttontext{
+    color: black;
+    font-weight: bold;
+    font-family: "Inconsolata", monospace;
+}
+
+.teambtn{
+    display: flex;
+    background-color: white;
+    border-radius: 15px;
+    padding: .9rem 2rem;
+    height: 70%;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    border-radius: 30px;
+    background-color: black;
+    width: 95%;
+    justify-content: space-between;
+    align-items: center;
+    height: 80%;
+    margin: auto;
+}
+
+.container .innercont1{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    background-color: #1E1E1E;
+    border-radius: 15px;
+    padding: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.container .innercont1 .text{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.normtext{
+    color: white;
+    font-family: "Inconsolata", monospace;
+    font-weight: 112.5;
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.title{
+    color: #1D586E;
+    font-family: Syne;
+    font-weight: 800;
+    font-size: 2rem;
+}
+
+.container .innercont2{
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem;
+    width: 90%;
+}
+
+.container .innercont2 .box{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    width: 55%;
+    height: 80%;
+    margin: auto;
+    background-color:#1E1E1E;
+    padding: 1rem;
+    border-radius: 15px;
+}
+
+.container .innercont2 .box .img{
+    display: flex;
+    margin: auto;
+    border-radius: 15px;
+    width: 90%;
+    height: 70%;
+}
+
+.container .innercont2 .box .img img{
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+
+.container .innercont2 .box .name{
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: space-between;
+    background-color:white;
+    border-radius: 15px;
+    width: 100%;
+    height: 20%;
+}
+
+.container .innercont2 .box .name .label{
+    color: black;
+    font-family: "Inconsolata", monospace;
+    font-weight: 112.5;
+    font-weight: bold;
+    font-size: 1rem;
+    margin: auto;
+}
